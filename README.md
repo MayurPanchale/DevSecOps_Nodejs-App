@@ -18,76 +18,28 @@ ___
 >+ ### Account on GitHub
 >+ ### Code (we will use code from this repository) : [click here for code](https://github.com/MayurPanchale/DevSecOps_Nodejs-App)
 
-To install and configure Windows Subsystem for Linux (WSL) on Windows, follow these steps:
-
-1. Enable WSL Feature on Windows
-Option A: Using PowerShell
-Open PowerShell as Administrator.
-
-Run the following command to enable WSL:
-
+Setting up Windows Subsystem for Linux (WSL) on Windows:
+Option 1: PowerShell Method
 bash
 Copy code
 wsl --install
-This command will enable the necessary features, install the latest version of WSL, and download Ubuntu as the default distribution.
-
-Restart your computer if prompted.
-
-Option B: Manually via Windows Features
-Open Control Panel.
-Go to Programs > Turn Windows features on or off.
-Enable both:
+This will enable WSL and install Ubuntu by default. Restart if prompted.
+Option 2: Manual Method via Control Panel
+Go to Control Panel ➡️ Programs ➡️ Turn Windows features on or off and enable:
 Windows Subsystem for Linux
 Virtual Machine Platform
-Click OK and restart your PC.
-2. Install a Linux Distribution
-After enabling WSL, you can install a Linux distribution from the Microsoft Store:
+Restart your PC after enabling these features.
+Once WSL is installed, you can set WSL 2 as default:
 
-Open the Microsoft Store and search for a Linux distribution (e.g., Ubuntu, Debian, Kali Linux).
-Click Get to install your preferred distribution.
-Alternatively, you can install a specific version using PowerShell:
-
-bash
-Copy code
-wsl --install -d <distribution-name>
-For example:
-
-bash
-Copy code
-wsl --install -d Ubuntu-20.04
-3. Set WSL 2 as Default (Optional but Recommended)
-By default, WSL 2 offers better performance. To set WSL 2 as the default version:
-
-Open PowerShell and run:
 bash
 Copy code
 wsl --set-default-version 2
-If you already have WSL 1 installed and want to upgrade to WSL 2, run:
+To manage your distributions:
 
 bash
 Copy code
-wsl --set-version <distribution-name> 2
-4. Configure WSL
-Once installed, you can configure your WSL environment:
-
-Open WSL: Use wsl or the specific distribution name (e.g., ubuntu) in PowerShell or the command prompt.
-
-Update Packages: Once inside your Linux terminal, update your packages:
-
-bash
-Copy code
-sudo apt update && sudo apt upgrade
-Check Available Distributions:
-
-bash
-Copy code
-wsl -l -v
-Set a Default Distribution:
-
-bash
-Copy code
-wsl --set-default <distribution-name>
-___
+wsl -l -v         # Lists available distributions
+wsl --set-default <distribution-name>  # Sets the default distribution
 
 # **Part 1** : **Initial Setup and Deployment**
 ## STEP 1: Launch Instance
