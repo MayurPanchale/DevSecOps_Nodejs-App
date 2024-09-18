@@ -2,15 +2,15 @@
 ### In this project we will create our Node.js application using Jenkins, security using SonarQube,OWASP and image scanning using Trivy. 
 ![project-diagram]()
 ___
-## Tool we will need in this project is :-
->+ ### 1.) AWS EC2 or WSL 
->+ ### 2.) Docker, Docker-compose and DockerHub
->+ ### 3.) Github  
->+ ### 4.) Jenkins
->+ ### 5.) SonarQube
->+ ### 6.) OWASP DC
->+ ### 7.) Trivy
->+ ### 8.) Email
+## Tools You Will Need for This Project:
+🚀 AWS EC2 or WSL
+🐋 Docker & Docker Compose
+🖥️ GitHub
+⚙️ Jenkins
+🔍 SonarQube
+🛡️ OWASP Dependency-Check (DC)
+🧑‍💻 Trivy
+✉️ Email Configuration
 ___
 # Prerequisites
 ### Before starting the project you should have these things in your system :-
