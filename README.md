@@ -1,6 +1,6 @@
 # **DevSecOps for Node.js Application Project :smile:**
 ### In this project we will create our Node.js application using Jenkins, security using SonarQube,OWASP and image scanning using Trivy. 
-![project-diagram](https://github.com/sudhajobs0107/DevSecOps_ToDo_App/blob/main/images/DevSecOps-ToDo-App.gif)
+![project-diagram]()
 ___
 ## Tool we will need in this project is :-
 >+ ### 1.) AWS EC2 or WSL 
