@@ -115,10 +115,14 @@ docker run -itd --name sonarqube -p 9000:9000 sonarqube:lts-community
 + ### Now enter login and password=admin and it will give us screen to reset our password and we will be on **SonarQube page**.
 ![sonar-dashboard]()
 + ### Now to make devsecops pipeline, we have create user on sonarqube and this user will have access given to jenkins. To add user in sonar, Go to SonarQube → Administrator → Security → Users → Tokens → Update Tokens → name "jenkins" → Generate.
+
 + ### Our sonarqube setup done. Now to put sonar into jenkins we have to Install Plugins. To install sonarqube plugins **Go to Manage Jenkins → Plugins → Available Plugins** → Search **SonarQube Scanner** → install this plugin.
 ### Now SonarQube token put in Jenkins → Go to Manage Jenkins → click on Credentials → System → Global credentials → Add Credentials → Secret text → in Secret put the token that we copied from SonarQube → ID "Sonar" → Description "Sonar" → Create.
+
 ### Same as Sonar add Docker Credentials in Jenkins → Go to Manage Jenkins → click on Credentials → System → Global credentials → Add Credentials → Username with password → in Secret put your username and password of dockerhub → ID "DockerHub" → Description "DockerHub" → Create.
+
 ### Now we will link our SonarQube with Jenkins, for this Go to Manage Jenkins → System → Find SonarQube servers → Add SonarQube → Name "Sonar" → Server URL "http://172.25.41.249:9000" → Server authentication token "Sonar" → click on Apply and Save.
 ### We added our SonarQube Server to Jenkins.
+
 ### Now to enable Sonar Scanner Go to Manage Jenkins → Tools → Find SonarQube Scanner installations → Add SonarQube Scanner → name "Sonar" → Version "latest" → click on Apply and Save.
 ### Now we will create sonar webhooks. Go to Sonar → Administrator → Webhooks → Create → Name "jenkins" → URL "http://172.25.41.249:8080/sonarqube-webhook/" → Create.
