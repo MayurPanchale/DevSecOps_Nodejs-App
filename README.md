@@ -246,3 +246,6 @@ post {
 ![mailreport](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/get-email.png)
 
 # **Our DevSecOps for Node.js Application Project is completed 😄.**
+
+## License
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
