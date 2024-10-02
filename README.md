@@ -1,16 +1,16 @@
 # **DevSecOps for Node.js Application Project :smile:**
 ### In this project we will create our Node.js application using Jenkins, security using SonarQube,OWASP and image scanning using Trivy. 
-![project-diagram]()
+![project-diagram](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/DevSecOps_Architecture.gif)
 ___
 ## Tools You Will Need for This Project:
-🚀 AWS EC2 or WSL
-🐋 Docker & Docker Compose
-🖥️ GitHub
-⚙️ Jenkins
-🔍 SonarQube
-🛡️ OWASP Dependency-Check (DC)
-🧑‍💻 Trivy
-✉️ Email Configuration
+>+ 🚀 AWS EC2 or WSL
+>+ 🐋 Docker & Docker Compose
+>+ 🖥️ GitHub
+>+ ⚙️ Jenkins
+>+ 🔍 SonarQube
+>+ 🛡️ OWASP Dependency-Check (DC)
+>+ 🧑‍💻 Trivy
+>+ ✉️ Email Configuration
 ___
 # Prerequisites
 ### Before starting the project you should have these things in your system :-
@@ -18,29 +18,27 @@ ___
 >+ ### Account on GitHub
 >+ ### Code (we will use code from this repository) : [click here for code](https://github.com/MayurPanchale/DevSecOps_Nodejs-App)
 
-Setting up Windows Subsystem for Linux (WSL) on Windows:
-Option 1: PowerShell Method
-bash
-Copy code
+### Setting up Windows Subsystem for Linux (WSL) on Windows:
+***Option 1: PowerShell Method***
+```bash
 wsl --install
+```
 This will enable WSL and install Ubuntu by default. Restart if prompted.
-Option 2: Manual Method via Control Panel
+***Option 2: Manual Method via Control Panel***
 Go to Control Panel ➡️ Programs ➡️ Turn Windows features on or off and enable:
 Windows Subsystem for Linux
 Virtual Machine Platform
 Restart your PC after enabling these features.
-Once WSL is installed, you can set WSL 2 as default:
+Once WSL is installed, you can set WSL 2 as default
 
-bash
-Copy code
+```bash
 wsl --set-default-version 2
 To manage your distributions:
-
-bash
-Copy code
+```
+```bash
 wsl -l -v         # Lists available distributions
 wsl --set-default <distribution-name>  # Sets the default distribution
-
+```
 # **Part 1** : **Initial Setup and Deployment**
 ## STEP 1: Launch Instance
 + ### Create AWS EC2 instance (t2.large)
@@ -126,3 +124,125 @@ docker run -itd --name sonarqube -p 9000:9000 sonarqube:lts-community
 
 ### Now to enable Sonar Scanner Go to Manage Jenkins → Tools → Find SonarQube Scanner installations → Add SonarQube Scanner → name "Sonar" → Version "latest" → click on Apply and Save.
 ### Now we will create sonar webhooks. Go to Sonar → Administrator → Webhooks → Create → Name "jenkins" → URL "http://172.25.41.249:8080/sonarqube-webhook/" → Create.
+
+# **Part 4** : **Setup Trivy**
+Now to install trivy use command :-
+
+```bash
+sudo apt-get install wget apt-transport-https gnupg lsb-release
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update
+sudo apt-get install trivy
+```
+
+# Part 6 : Setup OWASP DC
+### Now same as SonarQube we have to install OWASP plugins Go to Manage Jenkins → Plugins → Available Plugins → Search OWASP Dependency-Check → install this plugin.
+
+### Now to enable Dependency-Check Go to Manage Jenkins → Tools → Find Dependency-Check installations → Add Dependency-Check → name "OWASP" → Install automatically → Install from github.com → click on Apply and Save.
+
+### Now build a pipeline click on Create a job → give name "node-app-ci-cd" → select "Pipeline" → click OK.
+**Now add the script in Pipeline Script.**
+
+```bash
+pipeline {
+    agent any
+    environment{
+        SONAR_HOME = tool "sonar"
+    }
+    stages {
+        
+        stage("Code"){
+            steps{
+                git url: "https://github.com/MayurPanchale/DevSecOps_Nodejs-App.git" , branch: "main"
+                echo "Code Cloned Successfully"
+            }
+        }
+        stage("SonarQube Analysis"){
+            steps{
+              withSonarQubeEnv("sonar"){
+                  sh "${SONAR_HOME}/bin/sonar-scanner -Dsonar.projectName=node-todo-app -Dsonar.projectKey=node-todo-app -X"
+              }
+            }
+        }
+        stage("SonarQube Quality Gates"){
+            steps{
+              timeout(time: 5, unit: "MINUTES"){
+                  waitForQualityGate abortPipeline: false
+              }
+            }
+        }
+        stage("OWASP"){
+            steps{
+                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'OWASP'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        stage("Build & Test"){
+            steps{
+                sh 'docker build -t devsecops-todo-app:latest .'
+                echo "Code Built Successfully"
+            }
+        }
+        stage("Trivy"){
+            steps{
+                sh "trivy image devsecops-todo-app"
+            }
+        }
+        stage("Push to Private Docker Hub Repo"){
+            steps{
+                withCredentials([usernamePassword(credentialsId:"docker",passwordVariable:"dockerPass",usernameVariable:"dockerUser")]){
+                sh "docker login -u ${env.dockerUser} -p ${env.dockerPass}"
+                sh "docker tag devsecops-todo-app:latest ${env.dockerUser}/devsecops-todo-app:latest"
+                sh "docker push ${env.dockerUser}/devsecops-todo-app:latest"
+                }
+                
+            }
+        }
+        stage("Deploy"){
+            steps{
+                sh "docker-compose up -d"
+                echo "App Deployed Successfully"
+            }
+        }
+    }
+}
+```
+### Now click Apply and Save → Build Now and our pipeline will build successfully.
+![odc](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/ImageAfterOdcinstall%26RunPipeline.png)
+![jenkins-stages](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/Stage-view.png)
+
+### Our project on SonarQube.
+![Sonar-project](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/Sonar-report.png)
+## Our project will run perfectly.
+![project-run](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/web-app.png)
+
+# Part 7 : Setup Email Integration With Jenkins
+### First we have to install email plugin.
+### Go to Manage Jenkins → Plugins → Available Plugins → Search Email Extension Template → install this plugin.
+### Now go to your Gmail → click on your profile → click on Manage Your Google Account –> click on the Security tab on the left side panel → search App Passwords → Create a password → you will get page like image given below :-|
+![gmail-pass](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/AppPass.png)
+
+### Now same as Sonar and Docker we will add Email Credentials in Jenkins → Go to Manage Jenkins → click on Credentials → System → Global credentials → Add Credentials → Username with password → in Secret put panchalemayur@gmail.com and password that we created earlier → ID "email" → Description "email" → Create.
+### Now Go to Manage Jenkins → System → Find E-mail notification → Add SMTP=smtp.gmail.com → click Advanced → SMTP Authentication → UserName=panchalemayur@gmail.com → Password=put that we created → Tick Use SSL → SMTP Port=465 → click on Apply.
+
+### We have to add one more thing so in System → Find Extended E-mail Notification → Add SMTP=smtp.gmail.com → SMTP Port=465 → click Advanced → Credentials=select email that we created we earlier → Tick Use SSL → Default Content Type=HTML → go down and find Default Triggers → Tick Always → click on Apply and Save.
+### Now in pipeline in the down add code that given below :-
+```bash
+post {
+     always {
+        emailext attachLog: true,
+            subject: "'${currentBuild.result}'",
+            body: "Project: ${env.JOB_NAME}<br/>" +
+                "Build Number: ${env.BUILD_NUMBER}<br/>" +
+                "URL: ${env.BUILD_URL}<br/>",
+            to: 'postbox.aj99@gmail.com',  #change Your mail
+            attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
+        }
+    }
+```
+### Now build the pipeline and pipeline "SUCCESS" or "FAILURE" we will get email like image given below :-
+![mail](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/email.png)
+![mailreport](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/get-email.png)
+
+# **Our DevSecOps for Node.js Application Project is completed 😄.**
