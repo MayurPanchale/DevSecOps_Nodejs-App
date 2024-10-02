@@ -113,7 +113,7 @@ docker run -itd --name sonarqube -p 9000:9000 sonarqube:lts-community
 ![sonar-container](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/sonar-container.png)
 + ### Now open port no. 9000 and copy Public IPv4 address and paste in new tab **Public IPv4 address:9000** and we will be on **Unlock SonarQube page**.
 + ### Now enter login and password=admin and it will give us screen to reset our password and we will be on **SonarQube page**.
-![sonar-dashboard]()
+![sonar-dashboard](https://github.com/MayurPanchale/DevSecOps_Nodejs-App/blob/main/images/SonarDash.png)
 + ### Now to make devsecops pipeline, we have create user on sonarqube and this user will have access given to jenkins. To add user in sonar, Go to SonarQube → Administrator → Security → Users → Tokens → Update Tokens → name "jenkins" → Generate.
 
 + ### Our sonarqube setup done. Now to put sonar into jenkins we have to Install Plugins. To install sonarqube plugins **Go to Manage Jenkins → Plugins → Available Plugins** → Search **SonarQube Scanner** → install this plugin.
