@@ -4,4 +4,4 @@ services:
   web:
     image: "panchalemayur/devsecops-todo-app"
     ports:
-      - "8000:8000"
+      - "8001:8000"
